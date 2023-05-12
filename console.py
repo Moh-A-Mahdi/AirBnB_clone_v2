@@ -1,20 +1,12 @@
 #!/usr/bin/python3
-# File: console.py
-# Main Authors: Justin Majetich - Ezra Nobrega
-# email(s): <justinmajetich@gmail.com>
-#           <ezra.nobrega@outlook.com>
-# Collaborators: Yoshua Lopez - Ma Paz Quirola - Laura Socarras
-#
-
 """ Console Module """
 import cmd
 import sys
 import re
 import os
-import uuid
 from datetime import datetime
-
-from models.base_model import BaseModel, Base
+import uuid
+from models.base_model import BaseModel
 from models import storage
 from models.user import User
 from models.place import Place
@@ -31,16 +23,16 @@ class HBNBCommand(cmd.Cmd):
     prompt = '(hbnb) ' if sys.__stdin__.isatty() else ''
 
     classes = {
-        'BaseModel': BaseModel, 'User': User, 'Place': Place,
-        'State': State, 'City': City, 'Amenity': Amenity,
-        'Review': Review
-    }
+               'BaseModel': BaseModel, 'User': User, 'Place': Place,
+               'State': State, 'City': City, 'Amenity': Amenity,
+               'Review': Review
+              }
     dot_cmds = ['all', 'count', 'show', 'destroy', 'update']
     types = {
-        'number_rooms': int, 'number_bathrooms': int,
-        'max_guest': int, 'price_by_night': int,
-        'latitude': float, 'longitude': float
-    }
+             'number_rooms': int, 'number_bathrooms': int,
+             'max_guest': int, 'price_by_night': int,
+             'latitude': float, 'longitude': float
+            }
 
     def preloop(self):
         """Prints if isatty is false"""
@@ -49,6 +41,7 @@ class HBNBCommand(cmd.Cmd):
 
     def precmd(self, line):
         """Reformat command line for advanced command syntax.
+
         Usage: <class name>.<command>([<id> [<*args> or <**kwargs>]])
         (Brackets denote optional fields in usage example.)
         """
@@ -113,6 +106,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_EOF(self, arg):
         """ Handles EOF to exit program """
+        print()
         exit(0)
 
     def help_EOF(self):
@@ -121,7 +115,7 @@ class HBNBCommand(cmd.Cmd):
 
     def emptyline(self):
         """ Overrides the emptyline method of CMD """
-        return False
+        pass
 
     def do_create(self, args):
         """ Create an object of any class"""
@@ -211,7 +205,7 @@ class HBNBCommand(cmd.Cmd):
 
         key = c_name + "." + c_id
         try:
-            print(storage._FileStorage__objects[key])
+            print(storage.all()[key])
         except KeyError:
             print("** no instance found **")
 
@@ -243,7 +237,7 @@ class HBNBCommand(cmd.Cmd):
         key = c_name + "." + c_id
 
         try:
-            del (storage.all()[key])
+            storage.delete(storage.all()[key])
             storage.save()
         except KeyError:
             print("** no instance found **")
@@ -279,7 +273,7 @@ class HBNBCommand(cmd.Cmd):
     def do_count(self, args):
         """Count current number of class instances"""
         count = 0
-        for k, v in storage._FileStorage__objects.items():
+        for k, v in storage.all().items():
             if args == k.split('.')[0]:
                 count += 1
         print(count)
